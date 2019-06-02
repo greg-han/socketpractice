@@ -1,0 +1,34 @@
+<head>
+	<meta charset="utf-8"/>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js">
+//this script will inject io into the global scope
+</script>
+<script>
+  //let ws = new WebSocket('ws://localhost:8000');
+  //this is the difference between websockets and socket io 
+  //so where is this io coming from? we need socket io and we dont' have express
+  //so we can just use a CDN
+
+  //our html connects to server using  http: rather than ws
+  const socket =  io('http://localhost:8000');
+  console.log(socket);
+  //ws.onopen = (event) =>{
+  //client listens for ac onnecgt 
+  socket.on('connect',(data) =>{
+	 socket.on('welcome',(message)=>{
+           console.log(message)
+         });
+         //this message evnt will corrspond to the custom event in the server
+	  //that is waiting for message. we've defiend this event
+          //this is instead of ws.send(), this is the 2 way communication  
+         socket.emit('message',{data: "I am so excited i am connected" })
+  })
+
+ //ws.send('I am so excited i am connected!');
+//this corresponds to the above socket.on('welcome')
+ // ws.onmessage = ()=>{
+ //   console.log(event);
+//  }
+//in head below, this is what is sent and read as metadata from the transport layer
+</script>
