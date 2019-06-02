@@ -1,0 +1,9 @@
+
+<script src="/socket.io/socket.io.js">//we did use the CDN, but now we're loading from node</script>
+<script>
+    const socket =io('http://localhost:9000');
+    socket.on('messagefromServer', (dataFromServer)=>{
+      console.log(dataFromServer);
+	    socket.emit('dataToServer', { data: "Data from the Client!"});
+    })
+</script>
