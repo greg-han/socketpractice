@@ -1,9 +1,67 @@
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<style>
+  input{
+    width: 100%;
+    height: 35px;
+  }
+  #messages{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+ }
+  #messages li{
+    padding: 5px 10px;
+  }
+  #messages li:nth-child(odd){
+      background: #eee;
+  }
+</style>
+<div class="container">
+	<div class="row">
+          <div class="col-sm-12">
+             <form id="message-form">
+               <div class="col-sm-10">
+                 <input id="user-message" type="text" placeholder="Enter your message"/ >
+               </div>
+	       <div class="col-sm-2">
+                 <input class="btn btn-primary" type="submit" value="Send!" />
+               </div>
+          </div>
+        </div>
+       </form>
+       <ul id="messages">
+	       <!-- THIS WILL BE POPULATED BY JAVASCRIPT! -->
+      </ul>
+</div>
 <script src="/socket.io/socket.io.js">//we did use the CDN, but now we're loading from node</script>
 <script>
     const socket =io('http://localhost:9000');
     socket.on('messagefromServer', (dataFromServer)=>{
-      console.log(dataFromServer);
+            console.log(dataFromServer);
 	    socket.emit('dataToServer', { data: "Data from the Client!"});
     })
+    //grab the one thing with id of message-form, it will add its event listener
+    //and runt he callback if the event happens, then we will get the event oject
+    document.querySelector('#message-form').addEventListener('submit',(event)=>{
+       //this prevents form from submitting when it gets the event
+       event.preventDefault();
+       console.log("Form Submitted!!") 
+       const newMessage = document.querySelector('#user-message').value;
+       console.log(newMessage)
+       //Now that we have the value (newMessage), we want to send it to server
+       socket.emit('newMessageToServer',{text: newMessage})
+   })
+//As soon as the server sends this out, with custom event messageToClients, this will show on the screen
+   socket.on('messageToClients',(msg)=>{
+     console.log(msg)
+	   document.querySelector('#messages').innerHTML += `<li>${msg.text}</li>`;
+   })
+//socket.on('ping',()=>{
+//      console.log("Ping received from server");
+//    })
+//socket.on('pong',(latency)=>{
+//      console.log(latency);
+//      console.log("Pong received from server")
+//    })
 </script>
+

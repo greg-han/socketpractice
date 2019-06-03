@@ -16,22 +16,28 @@ const expressServer = app.listen(9000);
 //we handed it the express server if you removed exprss server it loads fine, but it won't get there
 //because you are no longer binding to a port you can also use the keyword "new" here, but socket IO
 //adds it for you
-//const io = socketio(expressServer);
+const io = socketio(expressServer);
 //instead of giving it a server, you can also give it a port. you can change the port that it's listening on
 //const io = socketio(9001);
 //the below code to show what socketio adds for you from its docs
 //io is our socket server, so in the docs if you see server.sockets or server.*, this is it.
-const io = new socketio(expressServer, {
+//const io = new socketio(expressServer, {
   //this is why we don't have to set up socketio in the cdn, that's why in that path we can load it  in the static page <script></script>
-   path: '/socket.io',
-   serveClient: true
-});
+//   path: '/socket.io',
+//   serveClient: true
+//});
 
 io.on('connection', (socket)=>{
   socket.emit('messageFromServer',{data: "Welcome tot he socketio server"});
   //if the event never happens, we run this callback
   socket.on('messageToServer',(dataFromClient)=>{
     console.log(dataFromClient)
+  })
+ //server saw this from some clietn one of the open windows. each window opens a different socket
+  socket.on('newMessageToServer',(msg)=>{
+    //we made a json object with the property text
+    io.emit('messageToClients', {text: msg.text})
+    console.log(msg)
   })
 })
 
